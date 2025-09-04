@@ -11,6 +11,7 @@ class Fila:
     def __init__(self):
         self._inicio: Node | None = None
         self._fim: Node | None = None
+        self._size: int = 0
 
     def add(self, novo: Node):
         if self._inicio == None:
@@ -19,6 +20,7 @@ class Fila:
         elif self._fim != None:
             self._fim.proximo = novo
             self._fim = novo
+        self._size += 1
 
     def get(self, remove: bool = True):
         tmp = self._inicio
@@ -28,18 +30,25 @@ class Fila:
                 self._fim = None
             if self._inicio != None:
                 self._inicio = self._inicio.proximo
+            if tmp != None:
+                self._size -= 1
         return tmp
 
     def is_empty(self):
         return self._inicio == None
 
     def at(self, i: int) -> Node | None:
+        if i >= self._size:
+            raise IndexError
         cont = 0
         atual = self._inicio
         while atual != None and atual.proximo != None and cont <= i:
             atual = atual.proximo
             cont += 1
         return atual
+
+    def __len__(self):
+        return self._size
 
     @override
     def __str__(self):
@@ -83,7 +92,14 @@ class FilaPrioridade:
         self._size: int = 0
         self._ultima_saida: str | None = None
 
-    def add(self, tipo: str, senha: str):
+    def add(self, senha: str | None = None, tipo: str | None = None, batch: list[tuple[str, str]] | None = None):
+        if tipo == None or senha == None:
+            if batch == None:
+                raise ValueError('batch ou tipo e senha são necessários para adicionar')
+            else:
+                for t, s in batch:
+                    self.add(t, s)
+                return
         self._filas[tipo].add(Node(tipo, senha))
         self._size += 1
 
@@ -144,3 +160,6 @@ class FilaPrioridade:
 
     def __len__(self):
         return self._size
+
+    def count(self, tipo: str):
+        return len(self._filas[tipo])

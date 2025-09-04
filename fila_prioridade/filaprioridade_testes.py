@@ -1,10 +1,10 @@
 import unittest
-from filaprioridade import FilaPrioridade
+from filaprioridade import FilaPrioridade  # pyright: ignore[reportImplicitRelativeImport]
 
 def testar_fila(teste: unittest.TestCase, para_adicionar: list[str], esperado: list[tuple[int, str]]):
     fp = FilaPrioridade()
     for i, t in enumerate(para_adicionar):
-        fp.add(t, str(i))
+        fp.add(str(i), t)
     for s, t in esperado:
         node = fp.get()
         teste.assertIsNotNone(node)
@@ -64,6 +64,29 @@ class TesteFilaPrioridade(unittest.TestCase):
             ['P', 'N', 'N', 'N', 'P'],
             [(0, 'P'), (1, 'N'), (2, 'N'), (4, 'P'), (3, 'N')],
         )
+
+    def testar_size(self):
+        fp = FilaPrioridade()
+        fp.add(batch=[('0', 'P'), ('1', 'P'), ('2', 'P')])
+        self.assertEqual(3, fp.count('P'))
+        self.assertEqual(3, len(fp))
+
+        fp = FilaPrioridade()
+        fp.add(batch=[('0', 'N'), ('1', 'N'), ('2', 'N'), ('2', 'P')])
+        self.assertEqual(3, fp.count('N'))
+        _ = fp.get()
+        self.assertEqual(0, fp.count('P'))
+        self.assertEqual(3, len(fp))
+
+        fp = FilaPrioridade()
+        fp.add(batch=[('0', 'P'), ('1', 'N'), ('2', 'N'), ('2', 'P')])
+        self.assertEqual(2, fp.count('N'))
+        self.assertEqual(4, len(fp))
+        for _ in range(10):
+            _ = fp.get()
+        self.assertEqual(0, fp.count('N'))
+        self.assertEqual(0, fp.count('P'))
+        self.assertEqual(0, len(fp))
 
 if __name__ == "__main__":
     _ = unittest.main()
