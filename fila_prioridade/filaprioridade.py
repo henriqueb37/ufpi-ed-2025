@@ -156,8 +156,8 @@ class FilaPrioridade:
         copia = copy(self)
         copia._saidas = self._saidas.copy()
         # De novo o copy, mas, dessa vez, mantém os Nodes originais porquê é uma cópia
-        # "rasa" então não cria objetos novos para cada uma das filas (eu acho, quase
-        # certeza). Então, teoricamente, é pra ser mais eficiente que uma cópia profunda
+        # "rasa" então não cria objetos novos para cada uma das filas.
+        # Então é pra ser mais eficiente que uma cópia profunda
         copia._filas = {k: copy(v) for k, v in self._filas.items()}
 
         # Retira os items da cópia

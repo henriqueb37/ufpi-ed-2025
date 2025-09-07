@@ -6,7 +6,7 @@ from filaprioridade import FilaPrioridade  # pyright: ignore[reportImplicitRelat
 
 class JanelaPrincipal(tk.Tk):
     def __init__(self):
-        self.hist: list[str] = []
+        self.hist: list[tuple[str, str]] = []
         self.fp: FilaPrioridade = FilaPrioridade()
         self.p_cont: int = 0
         self.n_cont: int = 0
@@ -79,16 +79,18 @@ class JanelaPrincipal(tk.Tk):
 
     def atender_cliente(self):
         cliente = self.fp.get()
-        if self.janela_cliente is not None and cliente is not None:
-            self.hist.append(cliente[0])
-            self.janela_cliente.reveal(*cliente)
+        if cliente is not None:
+            self.hist.append(cliente)
+            if self.janela_cliente is not None:
+                self.janela_cliente.reveal(*cliente)
         self.update_lbl_fila()
 
 
 class JanelaCliente(tk.Toplevel):
-    def __init__(self, root: tk.Tk, hist: list[str]):
-        self.hist: list[str] = hist[1:] if len(hist) >= 2 else []
-        self.senha_atual: str = hist[0] if len(hist) >= 1 else ''
+    def __init__(self, root: tk.Tk, hist: list[tuple[str, str]]):
+        self.hist: list[str] = [s for s, _ in hist[:-1]] if len(hist) >= 2 else []
+        self.senha_atual: str = hist[-1][0] if len(hist) >= 1 else '---'
+        tipo_atual = hist[-1][1] if len(hist) >= 1 else ''
 
         super().__init__(root)
         width = 600
@@ -114,7 +116,9 @@ class JanelaCliente(tk.Toplevel):
 
         self.lbl_hist: ttk.Label = ttk.Label(self.frm, text='Senhas anteriores:')
         self.lbl_hist.grid(row=0, column=1)
+
         self.update_hist()
+        self.update_senha_atual(tipo_atual)
 
     def close(self):
         if self.winfo_ismapped():
@@ -134,6 +138,9 @@ class JanelaCliente(tk.Toplevel):
         self.hist.append(self.senha_atual)
         self.update_hist()
         self.senha_atual = senha
+        self.update_senha_atual(tipo)
+
+    def update_senha_atual(self, tipo: str):
         _ = self.lbl_senha.configure(text=self.senha_atual)
         match tipo:
             case 'P':
@@ -143,7 +150,7 @@ class JanelaCliente(tk.Toplevel):
 
     def update_hist(self):
         _ = self.lbl_hist.configure(
-            text='Senhas anteriores:\n' + '\n'.join(list(self.hist))
+            text='Senhas anteriores:\n' + '\n'.join(self.hist)
         )
 
 
