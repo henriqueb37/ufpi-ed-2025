@@ -1,7 +1,10 @@
 import unittest
 from filaprioridade import FilaPrioridade  # pyright: ignore[reportImplicitRelativeImport]
 
-def testar_fila(teste: unittest.TestCase, para_adicionar: list[str], esperado: list[tuple[int, str]]):
+
+def testar_fila(
+    teste: unittest.TestCase, para_adicionar: list[str], esperado: list[tuple[int, str]]
+):
     fp = FilaPrioridade()
     for i, t in enumerate(para_adicionar):
         fp.add(str(i), t)
@@ -12,42 +15,44 @@ def testar_fila(teste: unittest.TestCase, para_adicionar: list[str], esperado: l
             teste.assertEqual(str(s), node[0])
             teste.assertEqual(t, node[1])
 
+
 class TesteFilaPrioridade(unittest.TestCase):
     def testar_add_get(self):
+        # fmt: off
         testar_fila(
             self,
             ['P', 'N', 'N'],
-            [(0, 'P'), (1, 'N'), (2, 'N')]
+            [(0, 'P'), (1, 'N'), (2, 'N')],
         )
         testar_fila(
             self,
             ['P', 'N', 'N', 'P'],
-            [(0, 'P'), (1, 'N'), (2, 'N'), (3, 'P')]
+            [(0, 'P'), (1, 'N'), (2, 'N'), (3, 'P')],
         )
         testar_fila(
             self,
             ['P', 'N', 'N', 'P', 'P'],
-            [(0, 'P'), (1, 'N'), (2, 'N'), (3, 'P'), (4, 'P')]
+            [(0, 'P'), (1, 'N'), (2, 'N'), (3, 'P'), (4, 'P')],
         )
         testar_fila(
             self,
             ['N', 'N', 'P', 'P', 'P'],
-            [(2, 'P'), (0, 'N'), (1, 'N'), (3, 'P'), (4, 'P')]
+            [(2, 'P'), (0, 'N'), (1, 'N'), (3, 'P'), (4, 'P')],
         )
         testar_fila(
             self,
             ['N', 'N', 'N', 'P', 'P', 'P'],
-            [(3, 'P'), (0, 'N'), (1, 'N'), (4, 'P'), (2, 'N'), (5, 'P')]
+            [(3, 'P'), (0, 'N'), (1, 'N'), (4, 'P'), (2, 'N'), (5, 'P')],
         )
         testar_fila(
             self,
             ['P', 'N', 'P', 'P', 'N'],
-            [(0, 'P'), (1, 'N'), (4, 'N'), (2, 'P'), (3, 'P')]
+            [(0, 'P'), (1, 'N'), (4, 'N'), (2, 'P'), (3, 'P')],
         )
         testar_fila(
             self,
             ['P', 'P', 'N'],
-            [(0, 'P'), (2, 'N'), (1, 'P')]
+            [(0, 'P'), (2, 'N'), (1, 'P')],
         )
         testar_fila(
             self,
@@ -57,13 +62,14 @@ class TesteFilaPrioridade(unittest.TestCase):
         testar_fila(
             self,
             ['P', 'N', 'P', 'P'],
-            [(0, 'P'), (1, 'N'), (2, 'P'), (3, 'P')]
+            [(0, 'P'), (1, 'N'), (2, 'P'), (3, 'P')],
         )
         testar_fila(
             self,
             ['P', 'N', 'N', 'N', 'P'],
             [(0, 'P'), (1, 'N'), (2, 'N'), (4, 'P'), (3, 'N')],
         )
+        # fmt: on
 
     def testar_size(self):
         fp = FilaPrioridade()
@@ -88,5 +94,6 @@ class TesteFilaPrioridade(unittest.TestCase):
         self.assertEqual(0, fp.count('P'))
         self.assertEqual(0, len(fp))
 
-if __name__ == "__main__":
+
+if __name__ == '__main__':
     _ = unittest.main()

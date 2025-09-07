@@ -1,11 +1,13 @@
 from copy import copy
 from typing import override
 
+
 class Node:
     def __init__(self, tipo: str, senha: str):
         self.senha: str = senha
         self.tipo: str = tipo
         self.proximo: Node | None = None
+
 
 class Fila:
     def __init__(self):
@@ -69,7 +71,7 @@ class Politica:
         for i, (tipo, max_consec) in enumerate(politica):
             self._prioridades[tipo] = len(politica) - i
             self._max_consecutivos[tipo] = max_consec
-            
+
     def get_prioridade(self, tipo: str):
         return self._prioridades[tipo]
 
@@ -79,6 +81,7 @@ class Politica:
     def __iter__(self):
         for t, m in self._politica:
             yield t, m
+
 
 class FilaPrioridade:
     def __init__(self):
@@ -92,7 +95,12 @@ class FilaPrioridade:
         self._size: int = 0
         self._ultima_saida: str | None = None
 
-    def add(self, senha: str | None = None, tipo: str | None = None, batch: list[tuple[str, str]] | None = None):
+    def add(
+        self,
+        senha: str | None = None,
+        tipo: str | None = None,
+        batch: list[tuple[str, str]] | None = None,
+    ):
         if tipo == None or senha == None:
             if batch == None:
                 raise ValueError('batch ou tipo e senha são necessários para adicionar')
@@ -133,12 +141,14 @@ class FilaPrioridade:
             # Se o retirado agora tiver uma prioridade maior que o retirado anteriormente,
             # significa que a lista já retirou todos os de menor prioridade disponível,
             # Então a contagem deve ser reiniciada
-            if self._ultima_saida != None and self._politica.get_prioridade(retorno[1]) > self._politica.get_prioridade(self._ultima_saida):
+            if self._ultima_saida != None and self._politica.get_prioridade(
+                retorno[1]
+            ) > self._politica.get_prioridade(self._ultima_saida):
                 for tipo in self._saidas:
                     self._saidas[tipo] = 0
                 self._saidas[retorno[1]] += 1
             self._ultima_saida = retorno[1]
-            
+
         return retorno
 
     def __iter__(self):
@@ -156,7 +166,6 @@ class FilaPrioridade:
         while atual != None:
             yield atual
             atual = copia.get()
-        raise StopIteration
 
     def __len__(self):
         return self._size
