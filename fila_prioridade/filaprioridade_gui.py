@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from filaprioridade import FilaPrioridade  # pyright: ignore[reportImplicitRelativeImport]
 # import sv_ttk
 
@@ -16,6 +16,8 @@ class JanelaPrincipal(tk.Tk):
         self.geometry('600x200')
         _ = self.columnconfigure(0, weight=1)
         _ = self.rowconfigure(0, weight=1)
+
+        self.protocol("WM_DELETE_WINDOW", self.on_close)
 
         self.janela_cliente: JanelaCliente | None = None
         # Frame principal
@@ -84,6 +86,27 @@ class JanelaPrincipal(tk.Tk):
             if self.janela_cliente is not None:
                 self.janela_cliente.reveal(*cliente)
         self.update_lbl_fila()
+
+    # ao tentar fechar a janela principal
+    def on_close(self):
+        if len(self.fp) > 0:  # ainda tem pessoas na fila
+            tk.messagebox.showwarning("Não é possiível sair!", "Ainda há pessoas na fila")
+        else:
+            # estatísticas finais
+            total = len(self.hist)
+            com = sum(1 for _, t in self.hist if t == "P")
+            sem = sum(1 for _, t in self.hist if t == "N")
+            perc_com = (com / total * 100) if total > 0 else 0
+            perc_sem = (sem / total * 100) if total > 0 else 0
+
+            msg = (
+                f"Total atendidos: {total}\n"
+                f"Com prioridade: {com} ({perc_com:.1f}%)\n"
+                f"Sem prioridade: {sem} ({perc_sem:.1f}%)"
+            )
+            tk.messagebox.showinfo("Estatísticas finais", msg) # mostra stats na interface
+            print("Estatísticas finais", msg) # também mostra stats no console
+            self.destroy()  # fecha a janela principal
 
 
 class JanelaCliente(tk.Toplevel):
