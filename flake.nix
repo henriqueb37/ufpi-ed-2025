@@ -12,7 +12,15 @@
     in {
       devShells.${system}.default = pkgs.mkShell {
         nativeBuildInputs = with pkgs; [ clang-tools cmake ];
-        buildInputs = with pkgs; [ gcc gdb valgrind ];
+        buildInputs = with pkgs; [
+          gcc
+          gdb
+          valgrind
+          (python313.withPackages (p: with p; [
+            matplotlib
+          ]))
+          basedpyright
+        ];
         shellHook = ''
           function run_cpp {
             outDir="`dirname $(realpath $1)`/bin"
