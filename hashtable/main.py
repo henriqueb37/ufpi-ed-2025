@@ -1,5 +1,3 @@
-from math import sqrt
-from statistics import stdev
 from typing import Iterable
 from matplotlib.patches import Rectangle
 import matplotlib.pyplot as plt
@@ -28,9 +26,32 @@ class HashTable:
             return
         novo = Node(value)
         h = self.hashfunc(value)
-        novo.next = self.table[h]
-        self.table[h] = novo
+        if self.table[h] is None:
+            self.table[h] = novo
+            return
+        atual = self.table[h]
+        assert atual is not None
+        while atual.next is not None:
+            if atual.value == value:
+                return
+            atual = atual.next
+        atual.next = novo
         self.n += 1
+
+    def delete(self, value):
+        for i in range(self.M):
+            atual = self.table[i]
+            if atual is None:
+                continue
+            if atual.value == value:
+                self.table[i] = atual.next
+                return
+            while atual.next is not None:
+                if atual.next.value == value:
+                    atual.next = atual.next.next
+                    return
+                atual = atual.next
+        raise KeyError(value)
 
     def sizes(self) -> list[int]:
         szs = [0] * self.M
@@ -73,22 +94,25 @@ def testa_hash(m: int, hashfunc = None):
     dm = np.mean(np.abs(sizes - media))
     dp = np.std(sizes)
 
-    # print(ht.sizes())
-    ax.hist(to_hist(sizes), bins=m)
+    print(ht.sizes())
+    szs = to_hist(sizes)
+    bins = range(0, ht.M + 1)
+    ax.hist(szs, bins=bins)
     ax.axhline(y=media, color='r', label='Média')
-    plt.xlabel("Índice")
-    plt.ylabel("Quantidade")
-    plt.title(f"Distribuição de dados em tabela hash com M = {m}")
+    ax.set_xticks(np.arange(0, ht.M, 1))
+    ax.set_xlabel("Índice")
+    ax.set_ylabel("Quantidade")
+    ax.set_title(f"Distribuição de dados em tabela hash com M = {m}")
     extra_text_handle = Rectangle((0, 0), 1, 1, fc="w", fill=False, edgecolor='none', linewidth=0)
     ax.legend([extra_text_handle, plt.gca().lines[0]], [f'Desvio Médio = {dm}\nDesvio Padrão = {dp}', 'Média'])
 
     plt.show()
 
-testa_hash(26, hash_letra)
-testa_hash(26, hash)
+# testa_hash(26, hash_letra)
+# testa_hash(26, hash)
 testa_hash(17)
-testa_hash(43)
-testa_hash(97)
-testa_hash(16)
-testa_hash(40)
-testa_hash(100)
+# testa_hash(43)
+# testa_hash(97)
+# testa_hash(16)
+# testa_hash(40)
+# testa_hash(100)
