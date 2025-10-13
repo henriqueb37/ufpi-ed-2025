@@ -2,8 +2,9 @@ import os
 import sys
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import Iterable, cast
+from typing import Any, Callable, Iterable, cast
 from matplotlib.patches import Polygon, Rectangle
+from numpy.typing import NDArray
 
 # Forçar seed da função hash como sendo 0
 hashseed = os.getenv('PYTHONHASHSEED')
@@ -88,34 +89,28 @@ def ler_arquivo():
 
 alunos = ler_arquivo()
 
-def testa_hash(m: int, hashfunc = None):
-    ht = HashTable(m, hashfunc)
-
-    for a in alunos:
-        ht.add(a)
-
-    media = ht.n / ht.M
-    sizes = np.array(ht.sizes())
-
+def mostra_grafico(sizes: NDArray[Any]):
     _, ax = plt.subplots()
+
+    n = sum(sizes)
+    m = len(sizes)
+    media = n / m
+    szs = to_hist(sizes)
+    bins = range(0, m + 1)
 
     dm = np.mean(np.abs(sizes - media))
     dp = np.std(sizes)
 
-    # print(ht.sizes())
-    szs = to_hist(sizes)
-    bins = range(0, ht.M + 1)
-
     _, _, patches = ax.hist(szs, bins=bins)
     for p, s in zip(cast(list[Polygon], patches), sizes):
-        if s/ht.n > 0.1:
+        if s/n > 0.1:
             p.set_facecolor('red')
-            print(f'{s} > 10% de {ht.n}')
+            # print(f'{s} > 10% de {n}')
         else:
             p.set_facecolor('blue')
 
     ax.axhline(y=media, color='r', label='Média')
-    ax.set_xticks(np.arange(0, ht.M, 1))
+    ax.set_xticks(np.arange(0, m, 1))
     ax.set_xlabel("Índice")
     ax.set_ylabel("Quantidade")
     ax.set_title(f"Distribuição de dados em tabela hash com M = {m}")
@@ -124,21 +119,71 @@ def testa_hash(m: int, hashfunc = None):
 
     plt.show()
 
-    return dp
+def testa_hash(m: int, hashfunc = None, grafico = False):
+    ht = HashTable(m, hashfunc)
+
+    for a in alunos:
+        ht.add(a)
+
+    sizes = np.array(ht.sizes())
+
+    # print(ht.sizes())
+    if grafico:
+        mostra_grafico(sizes)
+
+    dp = np.std(sizes)
+
+
+    return cast(float, dp)
+
+def get_res(menu: list[tuple[str, Callable[[], Any]]]):
+    while True:
+        for i, f in enumerate(menu):
+            print(f'{i+1}. {f[0]}')
+        print(f'{len(menu) + 1}. Cancelar')
+        res = input('Digite a opção desejada: ').strip()
+        try:
+            r = int(res)
+            if r < 1:
+                raise Exception()
+            if r == len(menu) + 1:
+                return None
+            return menu[r - 1][1]()
+        except Exception:
+            print(f'Opção {res} inválida!')
 
 def main():
-    dps = [
-        testa_hash(26, hash_letra),
-        testa_hash(26, hash),
-        testa_hash(17),
-        testa_hash(43),
-        testa_hash(97),
-        testa_hash(16),
-        testa_hash(40),
-        testa_hash(100),
+    tabelas: list[tuple[str, tuple[int] | tuple[int, Callable[[Any], int] | None]]] = [
+        ("Primeira letra",          (26, hash_letra)),
+        ("Função nativa",           (26, hash)),
+        ("Função da sala, M = 17",  (17,)),
+        ("Função da sala, M = 43",  (43,)),
+        ("Função da sala, M = 97",  (97,)),
+        ("Função da sala, M = 16",  (16,)),
+        ("Função da sala, M = 40",  (40,)),
+        ("Função da sala, M = 100", (100,)),
     ]
 
-    print(sorted(enumerate(dps), key=lambda x: x[1]))
+    def gerar_graficos(tabelas):
+        for desc, tab in tabelas:
+            print(f'Gerando gráfico "{desc}"...')
+            testa_hash(*tab, grafico=True)
+
+    def compara_desvios(tabelas):
+        dps = [(x[0], float(testa_hash(*x[1]))) for x in tabelas]
+        print('Lista dos menores desvios padrão:')
+        max_text = max([len(x[0]) for x in tabelas])
+        print('\n'.join([f'{x[0]:{max_text}}: {x[1]}' for x in sorted(dps, key=lambda x: x[1])]))
+
+    menu = [
+        ('Gerar gráficos', lambda: gerar_graficos(tabelas)),
+        ('Ranquear distribuições', lambda: compara_desvios(tabelas)),
+    ]
+
+    while True:
+        res = get_res(menu)
+        if res is None:
+            break
 
 if __name__ == '__main__':
     main()
