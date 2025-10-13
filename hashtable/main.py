@@ -1,7 +1,15 @@
-from typing import Iterable
-from matplotlib.patches import Rectangle
+import os
+import sys
 import matplotlib.pyplot as plt
 import numpy as np
+from typing import Iterable, cast
+from matplotlib.patches import Polygon, Rectangle
+
+# Forçar seed da função hash como sendo 0
+hashseed = os.getenv('PYTHONHASHSEED')
+if not hashseed:
+    os.environ['PYTHONHASHSEED'] = '0'
+    os.execv(sys.executable, [sys.executable] + sys.argv)
 
 class Node:
     def __init__(self, value: str):
@@ -74,7 +82,7 @@ def to_hist(l: Iterable[int]):
 def ler_arquivo():
     linhas = None
     with open("alunosED_2025.txt", 'r', encoding='utf-8') as f:
-        linhas = [l.strip() for l in f.readlines()]
+        linhas = [l.strip().upper() for l in f.readlines()]
     return linhas
 
 
@@ -94,10 +102,18 @@ def testa_hash(m: int, hashfunc = None):
     dm = np.mean(np.abs(sizes - media))
     dp = np.std(sizes)
 
-    print(ht.sizes())
+    # print(ht.sizes())
     szs = to_hist(sizes)
     bins = range(0, ht.M + 1)
-    ax.hist(szs, bins=bins)
+
+    _, _, patches = ax.hist(szs, bins=bins)
+    for p, s in zip(cast(list[Polygon], patches), sizes):
+        if s/ht.n > 0.1:
+            p.set_facecolor('red')
+            print(f'{s} > 10% de {ht.n}')
+        else:
+            p.set_facecolor('blue')
+
     ax.axhline(y=media, color='r', label='Média')
     ax.set_xticks(np.arange(0, ht.M, 1))
     ax.set_xlabel("Índice")
@@ -108,11 +124,21 @@ def testa_hash(m: int, hashfunc = None):
 
     plt.show()
 
-# testa_hash(26, hash_letra)
-# testa_hash(26, hash)
-testa_hash(17)
-# testa_hash(43)
-# testa_hash(97)
-# testa_hash(16)
-# testa_hash(40)
-# testa_hash(100)
+    return dp
+
+def main():
+    dps = [
+        testa_hash(26, hash_letra),
+        testa_hash(26, hash),
+        testa_hash(17),
+        testa_hash(43),
+        testa_hash(97),
+        testa_hash(16),
+        testa_hash(40),
+        testa_hash(100),
+    ]
+
+    print(sorted(enumerate(dps), key=lambda x: x[1]))
+
+if __name__ == '__main__':
+    main()
