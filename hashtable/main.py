@@ -37,6 +37,7 @@ class HashTable:
         h = self.hashfunc(value)
         if self.table[h] is None:
             self.table[h] = novo
+            self.n += 1
             return
         atual = self.table[h]
         assert atual is not None
@@ -54,13 +55,24 @@ class HashTable:
                 continue
             if atual.value == value:
                 self.table[i] = atual.next
+                self.n -= 1
                 return
             while atual.next is not None:
                 if atual.next.value == value:
                     atual.next = atual.next.next
+                    self.n -= 1
                     return
                 atual = atual.next
         raise KeyError(value)
+
+    def contains(self, value) -> bool:
+        for i in range(self.M):
+            atual = self.table[i]
+            while atual is not None:
+                if atual.value == value:
+                    return True
+                atual = atual.next
+        return False
 
     def sizes(self) -> list[int]:
         szs = [0] * self.M
@@ -72,7 +84,7 @@ class HashTable:
         return szs
 
 def hash_letra(key: str):
-    return ord(key[0] if len(key) > 0 else 'A') - ord('A')
+    return ord(key[0].upper() if len(key) > 0 else 'A') - ord('A')
 
 def to_hist(l: Iterable[int]):
     l2 = []
