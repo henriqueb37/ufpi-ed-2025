@@ -12,6 +12,8 @@ if not hashseed:
     os.environ['PYTHONHASHSEED'] = '0'
     os.execv(sys.executable, [sys.executable] + sys.argv)
 
+alunos = []
+
 class Node:
     def __init__(self, value: str):
         self.value: str = value
@@ -99,8 +101,6 @@ def ler_arquivo():
     return linhas
 
 
-alunos = ler_arquivo()
-
 def mostra_grafico(sizes: NDArray[Any]):
     _, ax = plt.subplots()
 
@@ -160,11 +160,14 @@ def get_res(menu: list[tuple[str, Callable[[], Any]]]):
                 raise Exception()
             if r == len(menu) + 1:
                 return None
-            return menu[r - 1][1]()
+            return menu[r - 1][1]
         except Exception:
             print(f'Opção {res} inválida!')
 
 def main():
+    global alunos
+    alunos = ler_arquivo()
+
     tabelas: list[tuple[str, tuple[int] | tuple[int, Callable[[Any], int] | None]]] = [
         ("Primeira letra",          (26, hash_letra)),
         ("Função nativa",           (26, hash)),
@@ -176,26 +179,62 @@ def main():
         ("Função da sala, M = 100", (100,)),
     ]
 
-    def gerar_graficos(tabelas):
+    def gerar_graficos():
         for desc, tab in tabelas:
             print(f'Gerando gráfico "{desc}"...')
-            testa_hash(*tab, grafico=True)
+            testa_hash(*tab, grafico=True)  # pyright: ignore[reportArgumentType]
 
-    def compara_desvios(tabelas):
-        dps = [(x[0], float(testa_hash(*x[1]))) for x in tabelas]
+    def compara_desvios():
+        dps = [(x[0], float(testa_hash(*x[1]))) for x in tabelas]  # pyright: ignore[reportArgumentType]
         print('Lista dos menores desvios padrão:')
         max_text = max([len(x[0]) for x in tabelas])
         print('\n'.join([f'{x[0]:{max_text}}: {x[1]}' for x in sorted(dps, key=lambda x: x[1])]))
 
+    def comparar_colisoes_letras():
+        ht = HashTable(26, hash_letra)
+        for a in alunos:
+            ht.add(a)
+        sizes = list(enumerate(ht.sizes()))
+        sizes.sort(key=lambda x: x[1])
+        zeros = [i for i, x in sizes if x == 0]
+        if len(zeros) > 0:
+            print('Letras sem elementos:', ', '.join([chr(ord("A") + i) for i in zeros]))
+        sizes = [x for x in sizes if x[1] > 0]
+        print(f'Letras com mais colisões:')
+        print('\n'.join([f'{chr(ord("A") + i)}: {sz}' for i, sz in sizes[-1:-4:-1]]))
+        print(f'Letras com menos colisões:')
+        print('\n'.join([f'{chr(ord("A") + i)}: {sz}' for i, sz in sizes[:3] if sz > 0]))
+
+    def comparar_colisoes_indices():
+        ht = HashTable(26, hash)
+        for a in alunos:
+            ht.add(a)
+        sizes = list(enumerate(ht.sizes()))
+        sizes.sort(key=lambda x: x[1])
+        zeros = [i for i, x in sizes if x == 0]
+        if len(zeros) > 0:
+            print('Índices sem elementos:', ', '.join(map(str, zeros)))
+        sizes = [x for x in sizes if x[1] > 0]
+        print(f'Índices com mais colisões:')
+        print('\n'.join([f'{i}: {sz}' for i, sz in sizes[-1:-4:-1] if sz > 0]))
+        print(f'Índices com menos colisões:')
+        print('\n'.join([f'{i}: {sz}' for i, sz in sizes[:3] if sz > 0]))
+
     menu = [
-        ('Gerar gráficos', lambda: gerar_graficos(tabelas)),
-        ('Ranquear distribuições', lambda: compara_desvios(tabelas)),
+        ('Gerar gráficos', gerar_graficos),
+        ('Ranquear distribuições', compara_desvios),
+        ('Comparar colisões de letras (Hash: letra inicial)', comparar_colisoes_letras),
+        ('Comparar colisões de letras (Hash: função nativa)', comparar_colisoes_indices),
     ]
 
     while True:
         res = get_res(menu)
         if res is None:
             break
+        else:
+            print()
+            res()
+            print()
 
 if __name__ == '__main__':
     main()
