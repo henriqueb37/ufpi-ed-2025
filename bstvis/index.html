@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bstvis</title>
+    <link href="https://cdn.jsdelivr.net/npm/beercss@3.12.13/dist/cdn/beer.min.css" rel="stylesheet">
+    <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@3.12.13/dist/cdn/beer.min.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
+  </head>
+  <body>
+    <h1>Visualização de Árvore de Busca Binária (BST)</h1>
+    <div id="app">
+      <main class="responsive">
+        <section id="inpzone" id="inpzone">
+          <div class="field label border">
+            <input id="inpen" type="text">
+            <label>Entrada</label>
+          </div>
+          <button id="btn-add">Adicionar</button>
+          <button id="btn-fnd">Pesquisar</button>
+          <button id="btn-rem">Remover</button>
+        </section>
+        <section id="vis" id="vis">
+          <div class="node" id="node-r">1234</div>
+          <div class="node" id="node-a">1</div>
+          <div class="node" id="node-a1">12</div>
+          <div class="node" id="node-a2">12345</div>
+          <div class="node" id="node-b">123456</div>
+          <div class="node" id="node-b1">1234567</div>
+          <div class="node" id="node-b2">12345678</div>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

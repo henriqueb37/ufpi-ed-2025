@@ -1,0 +1,54 @@
+#app #vis {
+    border: solid 1px;
+    border-radius: 2em;
+    min-height: 50em;
+    position: relative;
+}
+
+.node {
+    border-radius: 50em;
+    width: 4em;
+    height: 4em;
+    background: var(--surface-container);
+    position: absolute;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 22, 4 */
+#node-a1 {
+    top: 22em;
+    left: 2em;
+}
+
+#node-a2 {
+    top: 22em;
+    left: 12em;
+}
+
+/* 16, 9 */
+#node-a {
+    top: 12em;
+    left: 7em;
+}
+
+#node-b1 {
+    top: 22em;
+    left: 18em;
+}
+
+#node-b2 {
+    top: 22em;
+    left: 28em;
+}
+
+#node-b {
+    top: 12em;
+    left: 23em;
+}
+
+#node-r {
+    top: 2em;
+    left: 15em;
+}
