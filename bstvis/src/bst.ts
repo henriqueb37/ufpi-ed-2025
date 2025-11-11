@@ -87,7 +87,7 @@ export class Node {
     const alturaDireita = this.right !== undefined ? 1 + this.right.assertBalanceada() : 0
 
     if (Math.abs(alturaDireita - alturaEsquerda) >= 2) {
-      throw new Desbalanceada("Árvore desbalanceada no nó " + this.value)
+      throw new Desbalanceada(`Árvore desbalanceada no nó ${this.value}. ${alturaDireita} - ${alturaEsquerda} = ${alturaDireita - alturaEsquerda}`)
     }
 
     return Math.max(alturaDireita, alturaEsquerda)
@@ -194,6 +194,7 @@ export class BST {
 
     } catch (e) {
       if (e instanceof Desbalanceada) {
+        console.log(e.message)
         return false
       }
       console.error(e)
