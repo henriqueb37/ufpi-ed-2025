@@ -21,18 +21,18 @@
           <div class="grid">
             <div class="s6">
               <button id="btn-add">Adicionar</button>
-              <button id="btn-fnd">Pesquisar</button>
-              <span id="spn-fnd">✅ Elemento ## encontrado</span>
+              <button id="btn-fnd" popovertarget="skb-fnd">Pesquisar</button>
+              <button id="btn-pcr" popovertarget="dlg-pcr">Percorrer</button>
             </div>
-            <div class="s6">
-              teste: aaaaaaaaaaaaa; testeststjog fajlsfjsf
-            </div>
+            <div id="tree-info" class="s6"></div>
           </div>
         </section>
         <div id="node-tmpl"></div>
         <section id="vis" id="vis">
           <div id="tree"></div>
         </section>
+        <div id="skb-fnd" class="snackbar primary top" popover></div>
+        <dialog id="dlg-pcr" popover></dialog>
       </main>
     </div>
     <script type="module" src="/src/main.ts"></script>

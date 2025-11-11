@@ -52,16 +52,58 @@ function updateVis() {
       }
     }
   }
+
+  const divInfo = document.querySelector('#tree-info') as HTMLDivElement
+  divInfo.innerHTML =
+`<strong>Altura</strong> ${bst.height()}; <strong>Comprimento</strong> ${bst.internalPathLength()}; <Strong>Tamanho</Strong> ${bst.size()};
+<br><strong>Mínimo</strong> ${bst.min() || "---"}; <strong>Máximo</strong> ${bst.max() || "---"}`
 }
 
+const getInputEntry = () => document.querySelector('#inpen') as HTMLInputElement
+
 function onClickAdd() {
-  const valor = parseInt((document.querySelector('#inpen') as HTMLInputElement)?.value)
+  const valor = parseInt(getInputEntry()?.value)
   if (valor === 0 || valor) {
     bst.push(valor)
   }
   updateVis()
 }
 
+let lastTimer: number | undefined = undefined
+
+function onClickFind() {
+  const valor = parseInt(getInputEntry()?.value)
+  if (!valor && valor !== 0) {
+    return
+  }
+  const divRes = document.querySelector('#skb-fnd') as HTMLDivElement
+  if (bst.find(valor)) {
+    divRes.innerText = `✅ Elemento ${valor} encontrado.`
+    divRes.showPopover()
+  } else {
+    divRes.innerText = `❌ Elemento ${valor} NÃO encontrado.`
+    divRes.showPopover()
+  }
+  document.body.appendChild(divRes)
+  if (lastTimer !== undefined) {
+    clearTimeout(lastTimer)
+  }
+  lastTimer = setTimeout(() => divRes.hidePopover(), 3000)
+}
+
+function onClickPercorrer() {
+  const dlgPercorrer = document.querySelector('#dlg-pcr') as HTMLDialogElement
+  dlgPercorrer.innerHTML = `
+<strong>Pre-Ordem</strong>: ${bst.preOrdem()}<br>
+<strong>Pos-Ordem</strong>: ${bst.posOrdem()}<br>
+<strong>Em-Ordem</strong>: ${bst.emOrdem()}<br>
+<strong>Nível-Ordem</strong>: ${bst.levelOrder()}<br>
+`
+}
+
 updateVis();
 
-(document.querySelector('#btn-add') as HTMLButtonElement)?.addEventListener('click', onClickAdd)
+(document.querySelector('#btn-add') as HTMLButtonElement)?.addEventListener('click', onClickAdd);
+(document.querySelector('#btn-fnd') as HTMLButtonElement)?.addEventListener('click', onClickFind);
+(document.querySelector('#btn-pcr') as HTMLButtonElement)?.addEventListener('click', onClickPercorrer);
+getInputEntry().addEventListener('keydown', (e: KeyboardEvent) => e.key == "Enter" && onClickAdd())
