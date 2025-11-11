@@ -10,25 +10,28 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.2/dist/cdn/material-dynamic-colors.min.js"></script>
   </head>
   <body>
-    <h1>Visualização de Árvore de Busca Binária (BST)</h1>
     <div id="app">
       <main class="responsive">
+        <h1>Visualização de Árvore de Busca Binária (BST)</h1>
         <section id="inpzone" id="inpzone">
           <div class="field label border">
             <input id="inpen" type="text">
             <label>Entrada</label>
           </div>
-          <button id="btn-add">Adicionar</button>
-          <button id="btn-fnd">Pesquisar</button>
+          <div class="grid">
+            <div class="s6">
+              <button id="btn-add">Adicionar</button>
+              <button id="btn-fnd">Pesquisar</button>
+              <span id="spn-fnd">✅ Elemento ## encontrado</span>
+            </div>
+            <div class="s6">
+              teste: aaaaaaaaaaaaa; testeststjog fajlsfjsf
+            </div>
+          </div>
         </section>
+        <div id="node-tmpl"></div>
         <section id="vis" id="vis">
-          <div class="node" id="node-r">1234</div>
-          <div class="node" id="node-a">1</div>
-          <div class="node" id="node-a1">12</div>
-          <div class="node" id="node-a2">12345</div>
-          <div class="node" id="node-b">123456</div>
-          <div class="node" id="node-b1">1234567</div>
-          <div class="node" id="node-b2">12345678</div>
+          <div id="tree"></div>
         </section>
       </main>
     </div>

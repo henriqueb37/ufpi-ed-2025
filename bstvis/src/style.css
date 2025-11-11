@@ -5,6 +5,10 @@
     position: relative;
 }
 
+#node-tmpl {
+    background-color: var(--surface-container);
+}
+
 .node {
     border-radius: 50em;
     width: 4em;
