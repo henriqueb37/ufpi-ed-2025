@@ -53,9 +53,10 @@ function updateVis() {
     }
   }
 
+  const altura = bst.height()
   const divInfo = document.querySelector('#tree-info') as HTMLDivElement
   divInfo.innerHTML =
-`<strong>Altura</strong> ${bst.height()}; <strong>Comprimento</strong> ${bst.internalPathLength()}; <Strong>Tamanho</Strong> ${bst.size()};
+`<strong>Altura</strong> ${altura !== undefined ? altura : "---"}; <strong>Comprimento</strong> ${bst.internalPathLength()}; <Strong>Tamanho</Strong> ${bst.size()};
 <br><strong>Mínimo</strong> ${bst.min() || "---"}; <strong>Máximo</strong> ${bst.max() || "---"}`
 }
 

@@ -28,7 +28,7 @@ export class Node {
     if (this.value == value) {
       return true;
     }
-    return Boolean(this.left?.find(value) || this.right?.find(value))
+    return Boolean(value < this.value ? this.left?.find(value) : this.right?.find(value))
   }
 
   sizeRec(): number {
@@ -82,6 +82,7 @@ export class BST {
   push(value: number) {
     if (this.root == undefined) {
       this.root = new Node(value);
+      return
     }
     this.root.insert(value);
   }
@@ -100,19 +101,16 @@ export class BST {
     return this.root.sizeRec()
   }
 
-  min(): number | unknown {
+  min(): number | undefined {
     return this.root?.menorRec()
   }
 
-  max(): number | unknown {
+  max(): number | undefined {
     return this.root?.maiorRec()
   }
 
-  height(): number {
-    if (this.root === undefined) {
-      return 0
-    }
-    return this.root.alturaRec()
+  height(): number | undefined {
+    return this.root?.alturaRec()
   }
 
   internalPathLength(): number {
@@ -149,20 +147,17 @@ export class BST {
   levelOrder(): number[] {
     const l: number[] = []
     let fila: Node[] = []
-    let emEspera: Node[] = []
     if (this.root !== undefined) {
-      emEspera.push(this.root)
+      fila.push(this.root)
     }
-    while (emEspera.length > 0) {
-      fila = emEspera.sort((a,b) => b.value - a.value)
-      emEspera = []
-      while (fila.length > 0) {
-        const n = fila.pop()
-        l.push(n!.value)
-        if (n?.right !== undefined)
-          emEspera.push(n.right)
-        if (n?.left !== undefined)
-          emEspera.push(n.left)
+    while (fila.length > 0) {
+      const n = fila.shift()
+      if (n) {
+        l.push(n.value)
+        if (n.left !== undefined)
+          fila.push(n.left)
+        if (n.right !== undefined)
+          fila.push(n.right)
       }
     }
     return l
