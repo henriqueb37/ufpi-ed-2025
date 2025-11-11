@@ -1,3 +1,10 @@
+class Desbalanceada extends Error {
+  constructor(message: string) {
+    super(message)
+    this.name = "Desbalanceada"
+  }
+}
+
 export class Node {
   value: number;
   left: Node | undefined;
@@ -73,6 +80,17 @@ export class Node {
     l.push(this.value)
     if (this.right !== undefined)
       this.right.emOrdem(l)
+  }
+
+  assertBalanceada(): number {
+    const alturaEsquerda = this.left !== undefined ? 1 + this.left.assertBalanceada() : 0
+    const alturaDireita = this.right !== undefined ? 1 + this.right.assertBalanceada() : 0
+
+    if (Math.abs(alturaDireita - alturaEsquerda) >= 2) {
+      throw new Desbalanceada("Árvore desbalanceada no nó " + this.value)
+    }
+
+    return Math.max(alturaDireita, alturaEsquerda)
   }
 }
 
@@ -161,5 +179,25 @@ export class BST {
       }
     }
     return l
+  }
+
+  isBalanced(): boolean {
+    if (this.root === undefined) {
+      return true
+    }
+
+    try {
+      this.root.assertBalanceada()
+      
+      // Se a linha acima NÃO lançou um erro, a árvore é balanceada
+      return true
+
+    } catch (e) {
+      if (e instanceof Desbalanceada) {
+        return false
+      }
+      console.error(e)
+    }
+    return false
   }
 }

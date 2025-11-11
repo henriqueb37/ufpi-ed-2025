@@ -56,8 +56,8 @@ function updateVis() {
   const altura = bst.height()
   const divInfo = document.querySelector('#tree-info') as HTMLDivElement
   divInfo.innerHTML =
-`<strong>Altura</strong> ${altura !== undefined ? altura : "---"}; <strong>Comprimento</strong> ${bst.internalPathLength()}; <Strong>Tamanho</Strong> ${bst.size()};
-<br><strong>Mínimo</strong> ${bst.min() || "---"}; <strong>Máximo</strong> ${bst.max() || "---"}`
+`<strong>Altura</strong> ${altura !== undefined ? altura : "---"}; <strong>Comprimento</strong> ${bst.internalPathLength()}; <strong>Tamanho</strong> ${bst.size()};
+<br><strong>Mínimo</strong> ${bst.min() || "---"}; <strong>Máximo</strong> ${bst.max() || "---"}; <strong>Balanceada</strong>: ${bst.isBalanced() ? "Sim" : "Não"}`
 }
 
 const getInputEntry = () => document.querySelector('#inpen') as HTMLInputElement
