@@ -98,6 +98,10 @@ export class BST {
   root: Node | undefined;
 
   push(value: number) {
+    // Apenas números naturais
+    if (value < 0) {
+      return
+    }
     if (this.root == undefined) {
       this.root = new Node(value);
       return
